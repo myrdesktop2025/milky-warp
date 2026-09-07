@@ -16,7 +16,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 12.3.4   # 与本地版本一致
+          version: 12.3.4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,7 +25,9 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile   # 避免 lockfile 版本校验
+        run: pnpm install --no-frozen-lockfile
+        env:
+          PNPM_IGNORE_BUILDS: false   # 关键：允许构建脚本运行
 
       - name: Build portable EXE
         run: pnpm run tauri build -- --no-bundle --target x86_64-pc-windows-msvc
