@@ -1,0 +1,38 @@
+name: Build Portable EXE (Windows)
+
+on:
+  push:
+    branches: [ main ]          # 推送到 main 分支时自动触发
+  workflow_dispatch:            # 允许手动触发
+
+jobs:
+  build:
+    runs-on: windows-latest     # 使用 Windows 虚拟机构建
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build portable EXE (no bundle)
+        run: pnpm run tauri build -- --no-bundle --target x86_64-pc-windows-msvc
+
+      - name: Upload portable files
+        uses: actions/upload-artifact@v4
+        with:
+          name: milky-warp-portable
+          path: |
+            src-tauri/target/x86_64-pc-windows-msvc/release/milky-warp.exe
+            src-tauri/target/x86_64-pc-windows-msvc/release/resources/
+            # 如果存在其他必需文件（如 .dll），可一并添加
+            src-tauri/target/x86_64-pc-windows-msvc/release/*.dll

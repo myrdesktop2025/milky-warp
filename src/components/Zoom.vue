@@ -22,7 +22,7 @@ const WINDOW_SIZE_Y = 128;
 const move = ref(true);
 const lockOnScreen = ref(false);
 
-const zoomLevel = ref(0);
+const zoomLevel = ref(4);
 const targetZoomLevel = ref(0);
 const scale = computed(() => Math.pow(1.5, targetZoomLevel.value));
 
