@@ -25,7 +25,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --ignore-scripts=false
+        run: pnpm install --no-frozen-lockfile --config.ignore-scripts=false
 
       - name: Build portable EXE
         run: pnpm run tauri build -- --no-bundle --target x86_64-pc-windows-msvc
