@@ -16,21 +16,16 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 12.3.4
+          version: 8.15.9   # 降级到 8.x 以兼容 lockfile v6.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
-      - name: Remove broken lockfile and set config
-        run: |
-          rm -f pnpm-lock.yaml
-          pnpm config set ignore-scripts false
-        shell: bash
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile   # 重新生成锁文件
+        run: pnpm install --no-frozen-lockfile   # 无需额外参数
 
       - name: Build portable EXE
         run: pnpm run tauri build -- --no-bundle --target x86_64-pc-windows-msvc
