@@ -79,7 +79,7 @@ async function updateMonitor() {
 async function updateZoom(event: WheelEvent) {
     zoomLevel.value -= event.deltaY / 100;
     zoomLevel.value = Math.max(0, zoomLevel.value);
-    zoomLevel.value = Math.min(4, zoomLevel.value);
+    zoomLevel.value = Math.min(6, zoomLevel.value);
 }
 
 async function updateWindowSize() {
