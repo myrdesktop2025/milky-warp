@@ -25,9 +25,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-        env:
-          PNPM_IGNORE_BUILDS: false   # 关键：允许构建脚本运行
+        run: pnpm install --no-frozen-lockfile --ignore-scripts=false
 
       - name: Build portable EXE
         run: pnpm run tauri build -- --no-bundle --target x86_64-pc-windows-msvc
