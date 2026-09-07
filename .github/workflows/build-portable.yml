@@ -27,8 +27,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Build portable EXE
-        run: pnpm exec tauri build --no-bundle --target x86_64-pc-windows-msvc
+      - name: Build app (generates .exe and resources)
+        run: pnpm exec tauri build --target x86_64-pc-windows-msvc
 
       - name: Upload portable files
         uses: actions/upload-artifact@v4
