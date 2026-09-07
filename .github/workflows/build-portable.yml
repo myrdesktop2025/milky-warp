@@ -16,7 +16,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8.15.9   # 降级到 8.x 以兼容 lockfile v6.0
+          version: 8.15.9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,10 +25,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile   # 无需额外参数
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build portable EXE
-        run: pnpm run tauri build -- --no-bundle --target x86_64-pc-windows-msvc
+        run: pnpm exec tauri build --no-bundle --target x86_64-pc-windows-msvc
 
       - name: Upload portable files
         uses: actions/upload-artifact@v4
