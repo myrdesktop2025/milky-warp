@@ -35,8 +35,8 @@
             },
             "fs": {
                 "all": false,
-                "readBinary": true,
-                "writeBinary": true,
+                "read": true,
+                "write": true,
                 "scope": [
                     "**"
                 ]
