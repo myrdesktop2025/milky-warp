@@ -66,13 +66,19 @@ fn handle_tray_event(app: &tauri::AppHandle, event: tauri::SystemTrayEvent) {
     }
 }
 
+#[tauri::command]
+fn relaunch_app(app: tauri::AppHandle) -> Result<(), String> {
+    app.relaunch().map_err(|e| format!("Failed to relaunch: {}", e))?;
+    std::process::exit(0);
+}
+
 fn main() {
     update_screenshot();
 
     tauri::Builder::default()
         .system_tray(make_tray())
         .on_system_tray_event(handle_tray_event)
-        .invoke_handler(tauri::generate_handler![get_mouse_location, get_screenshot_path, update_screenshot])
+        .invoke_handler(tauri::generate_handler![get_mouse_location, get_screenshot_path, update_screenshot, relaunch_app])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

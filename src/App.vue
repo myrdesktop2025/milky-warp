@@ -7,7 +7,6 @@ import MZoom from "./components/Zoom.vue";
 import { register } from "@tauri-apps/api/globalShortcut";
 import { window } from "@tauri-apps/api";
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
-import { app } from "@tauri-apps/api";
 import { nextTick, onMounted, ref, watch } from "vue";
 import { config } from "./config";
 import { useMagicKeys } from "@vueuse/core";
@@ -25,8 +24,7 @@ onMounted(async () => {
     
     // Register restart shortcut
     register(config.restartShortcut, async () => {
-        await app.relaunch();
-        app.exit(0);
+        await invoke("relaunch_app");
     });
 });
 

@@ -26,9 +26,22 @@
             },
             "protocol": {
                 "asset": true,
-                "assetScope": ["**"]
+                "assetScope": [
+                    "**"
+                ]
             },
             "globalShortcut": {
+                "all": true
+            },
+            "fs": {
+                "all": false,
+                "readBinary": true,
+                "writeBinary": true,
+                "scope": [
+                    "**"
+                ]
+            },
+            "path": {
                 "all": true
             }
         },

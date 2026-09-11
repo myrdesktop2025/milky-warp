@@ -8,8 +8,10 @@
 <script setup lang="ts">
 import {computed, onBeforeMount, watch, reactive, ref} from "vue";
 import {invoke} from "@tauri-apps/api/tauri";
-import {window} from "@tauri-apps/api";
+import { window } from "@tauri-apps/api";
 import {LogicalPosition, LogicalSize} from "@tauri-apps/api/window";
+import { readBinaryFile, writeBinaryFile } from "@tauri-apps/api/fs";
+import { appDataDir } from "@tauri-apps/api/path";
 
 const props = defineProps<{
     screenshotPath: string;
@@ -18,6 +20,8 @@ const props = defineProps<{
 
 const WINDOW_SIZE_X = 256;
 const WINDOW_SIZE_Y = 128;
+
+const ZOOM_STORAGE_FILE = "zoom_level.bin";
 
 const move = ref(true);
 const lockOnScreen = ref(false);
@@ -45,9 +49,13 @@ const screenStyle = computed(() => {
     };
 });
 
-onBeforeMount(updateWindowSize);
+onBeforeMount(async () => {
+    await loadZoomLevel();
+    updateWindowSize();
+});
 
 watch(() => scale.value, updateWindowSize);
+watch(() => zoomLevel.value, saveZoomLevel);
 
 watch(() => props.isActive, async () => {
     if (props.isActive) {
@@ -146,6 +154,30 @@ async function moveLoop() {
     await windowMove();
     if (props.isActive && move.value) {
         requestAnimationFrame(moveLoop);
+    }
+}
+
+async function loadZoomLevel() {
+    try {
+        const appDataDirPath = await appDataDir();
+        const zoomData = await readBinaryFile(ZOOM_STORAGE_FILE);
+        if (zoomData.length > 0) {
+            zoomLevel.value = zoomData[0];
+            zoomLevel.value = Math.max(0, zoomLevel.value);
+            zoomLevel.value = Math.min(5, zoomLevel.value);
+        }
+    } catch (e) {
+        // File doesn't exist yet, use default
+        zoomLevel.value = 4;
+    }
+}
+
+async function saveZoomLevel() {
+    try {
+        const zoomData = new Uint8Array([zoomLevel.value]);
+        await writeBinaryFile(ZOOM_STORAGE_FILE, zoomData);
+    } catch (e) {
+        console.error("Failed to save zoom level:", e);
     }
 }
 
