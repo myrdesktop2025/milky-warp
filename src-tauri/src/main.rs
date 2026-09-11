@@ -75,11 +75,30 @@ fn relaunch_app(app: tauri::AppHandle) -> Result<(), String> {
             path
         });
     
-    if let Ok(path) = zoom_file {
+    if let Some(path) = zoom_file {
         let _ = fs::remove_file(path);
     }
     
-    app.relaunch().map_err(|e| format!("Failed to relaunch: {}", e))?;
+    // Relaunch the app by starting a new process and exiting current one
+    let args = std::env::args().skip(1).collect::<Vec<_>>();
+    let exe = std::env::current_exe().map_err(|e| format!("Failed to get executable path: {}", e))?;
+    
+    #[cfg(target_os = "windows")]
+    {
+        std::process::Command::new(exe)
+            .args(&args)
+            .spawn()
+            .map_err(|e| format!("Failed to spawn new process: {}", e))?;
+    }
+    
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::os::unix::process::CommandExt;
+        std::process::Command::new(exe)
+            .args(&args)
+            .exec();
+    }
+    
     std::process::exit(0);
 }
 
