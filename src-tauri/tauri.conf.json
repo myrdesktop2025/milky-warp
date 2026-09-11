@@ -35,8 +35,8 @@
             },
             "fs": {
                 "all": false,
-                "read": true,
-                "write": true,
+                "readFile": true,
+                "writeFile": true,
                 "scope": [
                     "**"
                 ]
