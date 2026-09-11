@@ -160,7 +160,7 @@ async function moveLoop() {
 async function loadZoomLevel() {
     try {
         const appDataDirPath = await appDataDir();
-        const zoomData = await readBinaryFile(ZOOM_STORAGE_FILE);
+        const zoomData = await readBinaryFile(ZOOM_STORAGE_FILE, { dir: appDataDirPath });
         if (zoomData.length > 0) {
             zoomLevel.value = zoomData[0];
             zoomLevel.value = Math.max(0, zoomLevel.value);
@@ -174,8 +174,9 @@ async function loadZoomLevel() {
 
 async function saveZoomLevel() {
     try {
+        const appDataDirPath = await appDataDir();
         const zoomData = new Uint8Array([zoomLevel.value]);
-        await writeBinaryFile(ZOOM_STORAGE_FILE, zoomData);
+        await writeBinaryFile(ZOOM_STORAGE_FILE, zoomData, { dir: appDataDirPath });
     } catch (e) {
         console.error("Failed to save zoom level:", e);
     }
