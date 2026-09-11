@@ -30,6 +30,10 @@
             },
             "globalShortcut": {
                 "all": true
+            },
+            "process": {
+                "relaunch": true,
+                "exit": true
             }
         },
         "bundle": {
