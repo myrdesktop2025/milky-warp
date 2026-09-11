@@ -68,6 +68,17 @@ fn handle_tray_event(app: &tauri::AppHandle, event: tauri::SystemTrayEvent) {
 
 #[tauri::command]
 fn relaunch_app(app: tauri::AppHandle) -> Result<(), String> {
+    // Delete zoom level storage file to reset to default zoom on restart
+    let zoom_file = app.path_resolver().app_data_dir()
+        .map(|mut path| {
+            path.push("zoom_level.bin");
+            path
+        });
+    
+    if let Ok(path) = zoom_file {
+        let _ = fs::remove_file(path);
+    }
+    
     app.relaunch().map_err(|e| format!("Failed to relaunch: {}", e))?;
     std::process::exit(0);
 }
