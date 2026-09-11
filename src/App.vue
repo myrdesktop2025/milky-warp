@@ -7,6 +7,7 @@ import MZoom from "./components/Zoom.vue";
 import { register } from "@tauri-apps/api/globalShortcut";
 import { window } from "@tauri-apps/api";
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+import { relaunch } from "@tauri-apps/api/process";
 import { nextTick, onMounted, ref, watch } from "vue";
 import { config } from "./config";
 import { useMagicKeys } from "@vueuse/core";
@@ -23,10 +24,11 @@ onMounted(async () => {
     screenshotPath.value = convertFileSrc((await invoke("get_screenshot_path", {})).replaceAll("\\", "/"));
 });
 
+// Alt+C：切换显示/隐藏
 register(config.shortcut, async () => {
     isWindowDisplayed.value = !isWindowDisplayed.value;
 
-    await nextTick(); // Needed to avoid position flickering
+    await nextTick();
 
     if (!isWindowDisplayed.value) {
         await window.getCurrent().hide();
@@ -35,11 +37,15 @@ register(config.shortcut, async () => {
         holdHide.value = false;
         screenshotPath.value = convertFileSrc((await invoke("update_screenshot", {})).replaceAll("\\", "/")) + "?" + Date.now();
         await window.getCurrent().show();
-        //await window.getCurrent().setFocus();
     }
 });
 
+// Shift+Alt+C：重启进程
+register(config.restartShortcut, async () => {
+    await relaunch();
+});
 
+// Shift+Ctrl+A：按住显示，松开隐藏
 watch(holdShortcut, async (value) => {
     if (value) {
         if (isWindowDisplayed.value) {
@@ -47,7 +53,7 @@ watch(holdShortcut, async (value) => {
         }
 
         isWindowDisplayed.value = true;
-        await nextTick(); // Needed to avoid position flickering
+        await nextTick();
         screenshotPath.value = convertFileSrc((await invoke("update_screenshot", {})).replaceAll("\\", "/")) + "?" + Date.now();
         holdHide.value = false;
     }
@@ -56,7 +62,6 @@ watch(holdShortcut, async (value) => {
         isWindowDisplayed.value = false;
     }
 });
-
 </script>
 
 <style lang="scss" scoped>
